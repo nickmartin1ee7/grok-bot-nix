@@ -1,0 +1,33 @@
+name: Update artifact pins
+
+on:
+  schedule:
+    - cron: "20 6 * * *" # daily, shortly after midnight PT
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Re-pin artifacts
+        run: ./update-package.sh
+
+      - name: Commit and push if sources.json changed
+        run: |
+          if git diff --quiet -- sources.json; then
+            echo "No pin changes."
+            exit 0
+          fi
+          version=$(jq -r .version sources.json)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources.json
+          git commit -m "ci: re-pin artifacts to ${version}"
+          git push

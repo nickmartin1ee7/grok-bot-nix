@@ -1,60 +1,57 @@
 # Contributing
 
-Short version: bump the pins in `flake.nix`, build all three packages, commit,
-push. That's the whole workflow — the packaging rarely changes, the artifacts
-do.
+Pins refresh automatically (a scheduled workflow runs `./update-package.sh`
+daily, build-tests, and pushes). Manual work is usually only needed when CI
+fails or the API is unreachable.
 
-## Why re-pinning is constant maintenance
+## How pinning works
 
-xAI serves the Linux builds from URLs like
+- `sources.json` holds `version` plus `{url, hash}` per artifact and system.
+  URLs are the API's versioned, per-release links (stable, unlike the
+  re-pointed slugs shown on the download page).
+- `./update-package.sh` queries the download API
+  (`https://api2.cursor.sh/updates/api/download/stable/<platform>/sand` —
+  `linux-x64` / `linux-arm64`), refuses releases where the two platforms
+  disagree on `version`, prefetches every pinned artifact, rewrites
+  `sources.json`, and runs `nix build` for the current system's packages.
+- Pin scope (which formats exist per system) is declared in two places that
+  must stay in sync: `pin_formats` in `update-package.sh` and the artifact
+  lookups in `flake.nix` (`makePackages`).
 
+## Manual refresh
+
+```bash
+./update-package.sh    # or: nix run .#update
+git diff sources.json  # review
+git commit -m "Re-pin artifacts to <version>" && git push
 ```
-https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-fb0a830618be0c54
+
+If the API is down, grab the URLs from https://x.ai/bot#download by hand and
+prefetch them:
+
+```bash
+nix store prefetch-file <url> --json   # prints the hash for sources.json
 ```
 
-but **re-uses the same URLs across releases** (observed 0.70.2 → 0.77.0 at
-unchanged URLs). Every upstream release therefore invalidates the pinned
-hashes until someone re-pins them.
+Verify artifact versions when pinning by hand:
 
-## Re-pin recipe
+```bash
+nix run nixpkgs#dpkg -- -f /nix/store/<prefetched-deb> Package Version
+nix run nixpkgs#rpm -- -qp --qf '%{VERSION}\n' /nix/store/<prefetched-rpm>
+```
 
-1. **Prefetch the three artifacts** and note the new hashes:
+## Hash mismatch in a fixed-output derivation
 
-   ```bash
-   nix store prefetch-file https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-fb0a830618be0c54 --json
-   nix store prefetch-file https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-cc18e4e726507b90 --json
-   nix store prefetch-file https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-6f47c900083d6a0c --json
-   ```
-
-   If those URLs 404 (rare), scrape the fresh build IDs from the download
-   page with the helper app:
-
-   ```bash
-   nix run .#update    # prints the current CDN URLs from https://x.ai/bot
-   ```
-
-2. **Verify the new version** and bump `artifacts.<deb|rpm|appimage>.version`
-   too (not just the hash):
-
-   ```bash
-   nix run nixpkgs#dpkg -- -f /nix/store/<prefetched-deb> Package Version
-   nix run nixpkgs#rpm -- -qp --qf '%{VERSION}\n' /nix/store/<prefetched-rpm>
-   ```
-
-3. **Update** `version` + `hash` for all three artifacts in `flake.nix`.
-
-4. **Build-test all three** before committing:
-
-   ```bash
-   nix build .#grok-bot .#grok-bot-rpm .#grok-bot-appimage --no-link
-   ```
-
-5. **Commit & push** with a message like `Re-pin artifacts to <version>`,
-   including a one-line note on how the hashes were obtained.
+Usually means upstream moved to a newer release before CI re-pinned (or the
+pin predates a release). Run the manual refresh above; the error's `got:`
+hash should match what prefetching reports.
 
 ## Packaging changes
 
-If you touch the builders themselves, follow nixpkgs conventions
-(see `nixpkgs#obsidian` for deb packaging, `nixpkgs#github-copilot-app` for
-AppImage). Run all three builds as above, and `nix flake check` for a
-no-artifact eval sanity check.
+If you touch the builders, follow nixpkgs conventions (see `nixpkgs#obsidian`
+for deb packaging, `nixpkgs#github-copilot-app` for AppImage) and run:
+
+```bash
+nix build .#grok-bot .#grok-bot-rpm .#grok-bot-appimage --no-link
+nix flake check
+```
