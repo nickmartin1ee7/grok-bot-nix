@@ -4,8 +4,10 @@
 # Linux"): a .deb, .rpm and .AppImage, all served from xAI's downloads CDN.
 # Each release URL embeds a per-release build ID, e.g.
 #   https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-fb0a830618be0c54
-# so after every release, grab the fresh links from the download page and
-# recompute hashes: `nix store prefetch-file <url> --json`.
+# NOTE: xAI re-points the SAME URLs to new builds on later releases (observed
+# 0.70.2 -> 0.77.0 at unchanged URLs), so stale-hash failures are expected
+# after upstream releases. After every release, re-prefetch at the same URLs
+# and bump version + hashes: `nix store prefetch-file <url> --json`.
 # Builder patterns follow nixpkgs conventions (e.g. nixpkgs#obsidian for
 # deb, nixpkgs#github-copilot-app packaging style for AppImage).
 {
@@ -22,20 +24,20 @@
 
       artifacts = {
         deb = {
-          version = "0.70.2";
+          version = "0.77.0";
           url = "https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-fb0a830618be0c54";
-          hash = "sha256-/3D8IXP5gnvhZIy+rznHwSEqP9myMmxQKL6KL9vvCQA=";
+          hash = "sha256-t08SXmrfOiXSlu+ZpKAEerSxevv8jp/dqg5XHc7+Qzw=";
         };
         rpm = {
-          version = "0.70.2";
+          version = "0.77.0";
           # .rpm from x.ai/bot#download → "More downloads" (rpm, x86_64)
           url = "https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-cc18e4e726507b90";
-          hash = "sha256-iVmtixJCde3UvMr4tLCImsfkdcTaDuDS78i5rKGRYrM=";
+          hash = "sha256-s+Zvme12TPUJLSqPu2lIxC9Qq/sSjF4wttDfAjMjj9I=";
         };
         appimage = {
-          version = "0.70.2";
+          version = "0.77.0";
           url = "https://api2.cursor.sh/updates/download/stable/linux-x64/grok-bot-6f47c900083d6a0c";
-          hash = "sha256-Y/7sjAuZdsslKJsTpchZjNuIK6nvLSks6ZDMQntGouA=";
+          hash = "sha256-bRFbuv9M9mlvA1T5sOAj/aa/6pwtMmy1Wd9gpgBaJVc=";
         };
       };
 
