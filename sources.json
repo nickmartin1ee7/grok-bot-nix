@@ -1,24 +1,24 @@
 {
-  "version": "0.79.4",
+  "version": "1.0.1",
   "sources": {
     "x86_64-linux": {
       "deb": {
-        "url": "https://downloads.cursor.com/grokbot/stable/7b5e3d87b3866229f111269975bc91bd8f3f7243/linux/x64/grok-bot_0.79.4_amd64.deb",
-        "hash": "sha256-zw/QAyJJzwjnX23/BFdmtRlQeN2HjR7u1gpoxNMaelo="
+        "url": "https://downloads.cursor.com/grokbot/stable/7eb488cd12ea2e65065a6b227f3ab49160b618bd/linux/x64/grok-bot_1.0.1_amd64.deb",
+        "hash": "sha256-hghqhKmVg2uMvwncqzOr4LD954LNn6W5ikJ+3nEcwzc="
       },
       "rpm": {
-        "url": "https://downloads.cursor.com/grokbot/stable/7b5e3d87b3866229f111269975bc91bd8f3f7243/linux/x64/grok-bot-0.79.4-1.x86_64.rpm",
-        "hash": "sha256-w94tl3IEMZvqk43c8T9HULe0tQsSV4GRNk70CH32yfU="
+        "url": "https://downloads.cursor.com/grokbot/stable/7eb488cd12ea2e65065a6b227f3ab49160b618bd/linux/x64/grok-bot-1.0.1-1.x86_64.rpm",
+        "hash": "sha256-Y6Kvl8hlcg+RuKScE/+hlpJg9AMBjvaBRGaX2H9w8MI="
       },
       "appimage": {
-        "url": "https://downloads.cursor.com/grokbot/stable/7b5e3d87b3866229f111269975bc91bd8f3f7243/linux/x64/Grok_Bot_0.79.4.AppImage",
-        "hash": "sha256-tdAJeF4j9viBjt71EpdoFmV4psABbihjju395JFQ5uw="
+        "url": "https://downloads.cursor.com/grokbot/stable/7eb488cd12ea2e65065a6b227f3ab49160b618bd/linux/x64/Grok_Bot_1.0.1.AppImage",
+        "hash": "sha256-rlLK6iUomHp7qiSf8qWsjiECyeXDvubtMI+Xe5GoMtI="
       }
     },
     "aarch64-linux": {
       "deb": {
-        "url": "https://downloads.cursor.com/grokbot/stable/7b5e3d87b3866229f111269975bc91bd8f3f7243/linux/arm64/grok-bot_0.79.4_arm64.deb",
-        "hash": "sha256-K6kZwsim/ynorZBluC2qE2NeQwZnelxs4A6b+zwfUyQ="
+        "url": "https://downloads.cursor.com/grokbot/stable/7eb488cd12ea2e65065a6b227f3ab49160b618bd/linux/arm64/grok-bot_1.0.1_arm64.deb",
+        "hash": "sha256-AGOgRu3yrvXD9JV0Lw75ruExzQ/aWXE1xa5n25KeRtc="
       }
     }
   }
